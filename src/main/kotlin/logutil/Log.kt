@@ -1,6 +1,6 @@
-package cc.gxstudio.gamanager.logutil
+package cc.gxstudio.gmanager.logutil
 
-import cc.gxstudio.gamanager.PluginMain
+import cc.gxstudio.gmanager.PluginMain
 
 @Suppress("unused")
 object Log {

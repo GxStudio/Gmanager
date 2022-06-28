@@ -1,16 +1,18 @@
-package cc.gxstudio.gamanager
+package cc.gxstudio.gmanager
 
+import cc.gxstudio.gmanager.command.Commands
+import cc.gxstudio.gmanager.config.KtorConfig
+import cc.gxstudio.gmanager.config.MysqlConfig
+import cc.gxstudio.gmanager.globalvar.enable
+import cc.gxstudio.gmanager.globalvar.namespace
+import cc.gxstudio.gmanager.http.api.startServer
+import cc.gxstudio.gmanager.initialize.InitializeGroup
+import cc.gxstudio.gmanager.logutil.Log
+import cc.gxstudio.gmanager.permission.LuckPerms
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
-import net.mamoe.mirai.event.events.FriendMessageEvent
-import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.event.events.NewFriendRequestEvent
-import net.mamoe.mirai.message.data.Image
-import net.mamoe.mirai.message.data.Image.Key.queryUrl
-import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.utils.info
+import net.mamoe.mirai.event.events.*
 
 /**
  * 使用 kotlin 版请把
@@ -29,63 +31,68 @@ import net.mamoe.mirai.utils.info
 
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
-        id = "org.example.mirai-example",
-        name = "插件示例",
-        version = "0.1.0"
-    ) {
+        id = "cc.gxstudio.gmanager",
+        name = "G群管",
+        version = "2022.0"
+                        ) {
+        dependsOn("io.github.karlatemp.luckperms-mirai")
+        dependsOn("net.mamoe.mirai.console.chat-command")
         author("作者名称或联系方式")
         info(
             """
             这是一个测试插件, 
             在这里描述插件的功能和用法等.
         """.trimIndent()
-        )
+        
+            )
         // author 和 info 可以删除.
     }
-) {
+                                ) {
     override fun onEnable() {
-        logger.info { "Plugin loaded" }
-        //配置文件目录 "${dataFolder.absolutePath}/"
+        namespace = parentPermission.id.namespace
+        //_______________________________________
+        KtorConfig.reload()
+        MysqlConfig.reload()
+        //___________________________________________
+        Commands.regCommand()
+        //CommandManager.unregisterCommand(GroupCommand())
+        //___________________________________________
+        
+        //_________________________________________
+        Log.i("配置文件目录：${dataFolder.absolutePath}", "插件已加载")
+        //_____________________________________________________
+        LuckPerms.loadLuckPermsApi()
+        LuckPerms.createGroups()
+        //_____________________________
+        LuckPerms.setDefaultPermission()
+        //_______________________________
+        startServer()
+        //___________________________________
+        enable = true
+        //______________________________________
         val eventChannel = GlobalEventChannel.parentScope(this)
-        eventChannel.subscribeAlways<GroupMessageEvent>{
-            //群消息
-            //复读示例
-            if (message.contentToString().startsWith("复读")) {
-                group.sendMessage(message.contentToString().replace("复读", ""))
-            }
-            if (message.contentToString() == "hi") {
-                //群内发送
-                group.sendMessage("hi")
-                //向发送者私聊发送消息
-                sender.sendMessage("hi")
-                //不继续处理
-                return@subscribeAlways
-            }
-            //分类示例
-            message.forEach {
-                //循环每个元素在消息里
-                if (it is Image) {
-                    //如果消息这一部分是图片
-                    val url = it.queryUrl()
-                    group.sendMessage("图片，下载地址$url")
-                }
-                if (it is PlainText) {
-                    //如果消息这一部分是纯文本
-                    group.sendMessage("纯文本，内容:${it.content}")
-                }
-            }
+        eventChannel.subscribeAlways<GroupMessageEvent> {//群消息事件
+        
         }
-        eventChannel.subscribeAlways<FriendMessageEvent>{
-            //好友信息
-            sender.sendMessage("hi")
+        eventChannel.subscribeAlways<FriendMessageEvent> { //好友信息事件
         }
-        eventChannel.subscribeAlways<NewFriendRequestEvent>{
-            //自动同意好友申请
+        eventChannel.subscribeAlways<NewFriendRequestEvent> { //好友申请事件
             accept()
         }
-        eventChannel.subscribeAlways<BotInvitedJoinGroupRequestEvent>{
-            //自动同意加群申请
+        eventChannel.subscribeAlways<BotInvitedJoinGroupRequestEvent> { //加群申请事件
             accept()
         }
+        eventChannel.subscribeAlways<BotJoinGroupEvent> { //加入群事件
+            Log.i("机器人加入群，初始化群中", "BotJoinGroupEvent")
+            InitializeGroup.main(group)
+        }
+        
+        eventChannel.subscribeAlways<BotOnlineEvent> {
+            Log.v("收到机器人登录，初始化中", "BotOnlineEvent")
+            InitializeGroup.list(bot.groups)
+        }
+        
     }
+    
+    
 }
