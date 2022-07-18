@@ -12,7 +12,7 @@ object Management {
     suspend fun kickMember(member: NormalMember, reason: String?) {
         var packageReason =""
         if (reason == null){
-            packageReason = ""//todo:默认踢出原因
+            packageReason = ""//todo:默认踢出原因.
         }
         member.kick(packageReason)
         //todo:踢出在群内发布信息（判断）
