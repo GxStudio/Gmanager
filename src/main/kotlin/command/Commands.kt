@@ -140,6 +140,7 @@ object Commands {
         @Handler
         suspend fun CommandSender.onCommand(
             group: Group? = getGroupOrNull(),
+            text: String,
             
             isPinned: Boolean = false,
             sendToNewMember: Boolean = false,
