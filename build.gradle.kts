@@ -3,14 +3,14 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
     
-    id("net.mamoe.mirai-console") version "2.12.0-dev-44087508"
+    id("net.mamoe.mirai-console") version "2.13.0-dev-057708e6"
 }
 
 group = "cc.gxstudio"
 version = "BETA"
 
 repositories {
-    // maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
+    maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
     mavenLocal()
     mavenCentral()
     

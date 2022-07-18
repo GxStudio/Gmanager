@@ -88,7 +88,7 @@ object PluginMain : KotlinPlugin(
         }
         
         eventChannel.subscribeAlways<BotOnlineEvent> {
-            Log.v("收到机器人登录，初始化中", "BotOnlineEvent")
+            Log.i("收到机器人登录，初始化中", "BotOnlineEvent")
             InitializeGroup.list(bot.groups)
         }
         

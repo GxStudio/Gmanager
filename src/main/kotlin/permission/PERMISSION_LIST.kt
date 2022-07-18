@@ -18,7 +18,7 @@ val PERMISSION_LIST_COMMAND_GLOBAL: Map<String, String>
 private fun commandToMapOf(list: List<Command>): MutableMap<String, String> {
     val map = mutableMapOf<String, String>()
     for (command in list) {
-        map[command.permissionIdString] = command.description
+        map[command.primaryName] = command.description
     }
     return map
 }
