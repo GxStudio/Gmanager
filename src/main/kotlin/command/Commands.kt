@@ -139,7 +139,7 @@ object Commands {
                                                  ) {
         @Handler
         suspend fun CommandSender.onCommand(
-            group: Group? = getGroupOrNull(),
+            group: Group? = getGroupOrNull(),//获取群
             text: String,
             
             isPinned: Boolean = false,
