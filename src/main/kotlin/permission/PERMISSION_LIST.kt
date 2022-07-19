@@ -1,7 +1,6 @@
 package cc.gxstudio.gmanager.permission
 
 import cc.gxstudio.gmanager.command.Commands
-import cc.gxstudio.gmanager.extension.permissionIdString
 import net.mamoe.mirai.console.command.Command
 
 val PERMISSIONS_LIST = mutableMapOf<String, String>().apply {
@@ -9,7 +8,7 @@ val PERMISSIONS_LIST = mutableMapOf<String, String>().apply {
     putAll(PERMISSION_LIST_COMMAND_GLOBAL)
 }
 
-val PERMISSION_LIST_COMMAND_NORMAL: Map<String, String>
+val PERMISSION_LIST_COMMAND_NORMAL: Map<String, String>//
     get() = commandToMapOf(Commands.COMMAND_LIST)
 
 val PERMISSION_LIST_COMMAND_GLOBAL: Map<String, String>
