@@ -6,7 +6,7 @@ import net.mamoe.mirai.console.command.Command
 val PERMISSIONS_LIST = mutableMapOf<String, String>().apply {
     putAll(PERMISSION_LIST_COMMAND_NORMAL)
     putAll(PERMISSION_LIST_COMMAND_GLOBAL)
-}
+}//
 
 val PERMISSION_LIST_COMMAND_NORMAL: Map<String, String>
     get() = commandToMapOf(Commands.COMMAND_LIST)
