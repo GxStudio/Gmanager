@@ -34,7 +34,7 @@ dependencies {
 //    implementation ("io.ktor:ktor-server-core:1.5.2")
 //    implementation ("io.ktor:ktor-server-netty:1.5.2")
 //    implementation ("io.ktor:ktor-serialization:1.5.2")
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
     implementation("mysql:mysql-connector-java:8.0.29")
     compileOnly("net.luckperms:api:5.4")

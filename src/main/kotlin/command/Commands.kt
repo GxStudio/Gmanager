@@ -37,7 +37,7 @@ object Commands {
                 OffManagerCommand(),
                 AtAllCommand(),
                 CheckCommand(),
-                SendAnnouncementCommand()
+                //SendAnnouncementCommand()
                 //SendGroupMessageCommand()
                                               )
             mlist.addAll(COMMAND_LIST_GLOBAL)
@@ -132,6 +132,14 @@ object Commands {
             //todo:查询权限
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
     
     class SendAnnouncementCommand : SimpleCommand(
         PluginMain, "sendAnnouncement",
