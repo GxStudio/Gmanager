@@ -121,7 +121,7 @@ object Commands {
             group!!.sendMessage(AtAll + text)
         }
     }
-    
+    //权限查询
     class CheckCommand : SimpleCommand(
         PluginMain, "check",
         description = "基础指令-查询自己的权限"
@@ -132,13 +132,28 @@ object Commands {
             //todo:查询权限
         }
     }
+    //撤回消息
+    class recallMessageCommand : SimpleCommand(
+        PluginMain, "recall",
+        description = "基础指令-撤回指定消息"
+                                              ) {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO:完成撤回消息参数
+            if (dontHasNormalCommandPermission(this@recallMessageCommand, group)) return
+            //TODO:完成撤回消息
+        }
+    }
     
-    
-    
-    
-    
-    
-    
+    class recallMessageRecentCommand : SimpleCommand(
+        PluginMain, "recallrecent",
+        description = "基础指令-撤回最近的N条消息"
+                                                    ) {
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()){//TODO:完成撤回最近消息参数
+            if (dontHasNormalCommandPermission(this@recallMessageRecentCommand, group)) return
+            //TODO:完成撤回最近消息
+        }
+        
+    }
     
     
     class SendAnnouncementCommand : SimpleCommand(
