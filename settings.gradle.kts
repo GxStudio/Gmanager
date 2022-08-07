@@ -8,3 +8,14 @@ pluginManagement {
         maven("https://repo.mirai.mamoe.net/snapshots")
     }
 }
+plugins {
+    id("com.gradle.enterprise") version("3.10.3")
+}
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+        publishAlways()
+    }
+}
