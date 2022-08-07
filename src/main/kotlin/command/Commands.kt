@@ -121,6 +121,7 @@ object Commands {
             group!!.sendMessage(AtAll + text)
         }
     }
+    
     //权限查询
     class CheckCommand : SimpleCommand(
         PluginMain, "check",
@@ -132,6 +133,7 @@ object Commands {
             //todo:查询权限
         }
     }
+    
     //撤回消息
     class recallMessageCommand : SimpleCommand(
         PluginMain, "recall",
@@ -148,11 +150,99 @@ object Commands {
         PluginMain, "recallrecent",
         description = "基础指令-撤回最近的N条消息"
                                                     ) {
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()){//TODO:完成撤回最近消息参数
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO:完成撤回最近消息参数
             if (dontHasNormalCommandPermission(this@recallMessageRecentCommand, group)) return
             //TODO:完成撤回最近消息
         }
         
+    }
+    
+    //改名指令
+    class changeAllNickCommand : SimpleCommand(
+        PluginMain, "changeallnick", description = "基础指令-一键改名"
+                                              ) {
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@changeAllNickCommand, group)) return
+            //TODO:完成修改群名片
+        }
+    }
+    
+    class stopChangeAllNickCommand :
+        SimpleCommand(
+            PluginMain, "stopChangeAllNick",
+            description = "基础指令-停止一键改名"
+                     ) {
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@stopChangeAllNickCommand, group)) return
+            //TODO:完成停止修改群名片
+        }
+    }
+    
+    class changeMemberNickCommand() : SimpleCommand(
+        PluginMain, "changeNick",
+        description = "基础指令-修改指定群员名片"
+                                                   ) {
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
+            if (dontHasNormalCommandPermission(this@changeMemberNickCommand, group)) return
+            //TODO:完成修改指定群员 群名片
+        }
+    }
+    
+    //检测/筛选群员
+    class CheckSilenceMemberCommand : SimpleCommand(
+        PluginMain, "checksilencemember",
+        description = "基础指令-检查潜水(不发言)的群员"
+                                                   ) {
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
+            if (dontHasNormalCommandPermission(this@CheckSilenceMemberCommand, group)) return
+            //TODO:完成检测潜水群员
+            
+        }
+    }
+    
+    class CheckRepeatMemberCommand : SimpleCommand(
+        PluginMain, "checkrepeatmember",
+        description = "基础指令-检查多个群之间重复的群员"
+                                                  ) {
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
+            if (dontHasNormalCommandPermission(this@CheckRepeatMemberCommand, group)) return
+            //TODO:完成检测重复群员
+            
+        }
+    }
+    
+    //
+    class ChooseToKickCommand : SimpleCommand(
+        PluginMain, "choosetokick",
+        description = "基础指令-踢出指定筛选组成员"
+                                             ) {
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
+            if (dontHasNormalCommandPermission(this@ChooseToKickCommand, group)) return
+            //TODO:完成踢出筛选组成员
+            
+        }
+    }
+    
+    class ChooseToAtCommand : SimpleCommand(
+        PluginMain, "choosetoat",
+        description = "基础指令-At指定筛选组成员"
+                                           ) {
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
+            if (dontHasNormalCommandPermission(this@ChooseToAtCommand, group)) return
+            ///TODO:完成At筛选组成员
+            
+        }
+    }
+    
+    class ChooseToKickAndBlacklistCommand : SimpleCommand(
+        PluginMain, "choosetokickandBlacklist",
+        description = "基础指令-拉黑指定筛选组成员"
+                                                         ) {
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
+            if (dontHasNormalCommandPermission(this@ChooseToKickAndBlacklistCommand, group)) return
+            //TODO:完成拉黑筛选组成员
+            
+        }
     }
     
     
