@@ -51,10 +51,9 @@ object Commands {
         }
     }
     
-    
+    //禁言操作
     class MuteCommand : SimpleCommand(
-        PluginMain, "mute",
-        description = "基础指令-禁言群成员"
+        PluginMain, "mute", description = "基础指令-禁言群成员"
                                      ) {
         @Handler
         suspend fun CommandSender.onCommand(target: NormalMember, duration: Int) {
@@ -65,6 +64,35 @@ object Commands {
         }
     }
     
+    class UnMuteCommand : SimpleCommand(
+        PluginMain, "unmute",
+        description = "基础指令-解除禁言"
+                                       ) {
+        @Handler
+        suspend fun CommandSender.onCommand(target: NormalMember) {
+            
+            if (dontHasNormalCommandPermission(this@UnMuteCommand, target.group)) return
+            Management.muteMember(target, 0)
+            sendGroupOrOtherMessage("已解除${target.nameCardOrNick}的禁言")
+        }
+    }
+    
+    class MuteAllCommand : SimpleCommand(
+        PluginMain, "muteall",
+        description = "基础指令-全群禁言"
+                                        ) {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = getGroupOrNull()) {//todo:完成修改全群禁言
+            if (dontHasNormalCommandPermission(this@MuteAllCommand, group)) return
+            if (group != null) {
+                group.settings.isMuteAll = !(group.settings.isMuteAll)
+            } else {
+            
+            }
+        }
+    }
+    
+    //踢出成员
     class KickCommand : SimpleCommand(
         PluginMain, "kick",
         description = "基础指令-踢出群成员"
@@ -74,6 +102,18 @@ object Commands {
             if (dontHasNormalCommandPermission(this@KickCommand, target.group)) return
             Management.kickMember(target, reason)
             sendGroupOrOtherMessage("已踢出${target.nameCardOrNick},原因：${reason}")//todo:自定义内容
+        }
+    }
+    
+    //发送消息类
+    class AtAllCommand : SimpleCommand(
+        PluginMain, "atall",
+        description = "基础指令-at全体成员"
+                                      ) {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull(), text: String = "") {
+            if (dontHasNormalCommandPermission(this@AtAllCommand, group)) return
+            group!!.sendMessage(AtAll + text)
         }
     }
     
@@ -111,16 +151,6 @@ object Commands {
         }
     }
     
-    class AtAllCommand : SimpleCommand(
-        PluginMain, "atall",
-        description = "基础指令-at全体成员"
-                                      ) {
-        @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull(), text: String = "") {
-            if (dontHasNormalCommandPermission(this@AtAllCommand, group)) return
-            group!!.sendMessage(AtAll + text)
-        }
-    }
     
     //权限查询
     class CheckCommand : SimpleCommand(
@@ -159,7 +189,8 @@ object Commands {
     
     //改名指令
     class changeAllNickCommand : SimpleCommand(
-        PluginMain, "changeallnick", description = "基础指令-一键改名"
+        PluginMain, "changeallnick",
+        description = "基础指令-一键改名"
                                               ) {
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@changeAllNickCommand, group)) return
@@ -167,11 +198,10 @@ object Commands {
         }
     }
     
-    class stopChangeAllNickCommand :
-        SimpleCommand(
-            PluginMain, "stopChangeAllNick",
-            description = "基础指令-停止一键改名"
-                     ) {
+    class stopChangeAllNickCommand : SimpleCommand(
+        PluginMain, "stopChangeAllNick",
+        description = "基础指令-停止一键改名"
+                                                  ) {
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@stopChangeAllNickCommand, group)) return
             //TODO:完成停止修改群名片
@@ -211,7 +241,7 @@ object Commands {
         }
     }
     
-    //
+    //筛选组操作
     class ChooseToKickCommand : SimpleCommand(
         PluginMain, "choosetokick",
         description = "基础指令-踢出指定筛选组成员"
@@ -245,7 +275,81 @@ object Commands {
         }
     }
     
+    //警告功能
+    class WarnCommand : SimpleCommand(
+        PluginMain, "warn",
+        description = "基础指令-警告群成员"
+                                     ) {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@WarnCommand, group)) return
+            //完成警告
+            
+        }
+    }
     
+    class ClearMemberWarnCommand : SimpleCommand(
+        PluginMain, "clrmemberwarn",
+        description = "基础指令-清除群成员警告"
+                                                ) {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@ClearMemberWarnCommand, group)) return
+            //TODO:完成清除群成员警告
+        }
+    }
+    
+    class ClearGroupWarnCommand : SimpleCommand(
+        PluginMain, "clrgroupwarn",
+        description = "基础指令-清除群所有成员警告"
+                                               ) {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@ClearGroupWarnCommand, group)) return
+            //TODO:完成清除群所有成员警告
+            
+        }
+    }
+    
+    //投票执行
+    class VoteKickCommand : SimpleCommand(
+        PluginMain, "votekick",
+        description = "基础指令-清除群所有成员警告"
+                                         ) {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@VoteKickCommand, group)) return
+            //TODO:完成投票踢人
+            
+        }
+    }
+    
+    
+    class VoteMuteCommand : SimpleCommand(
+        PluginMain, "votemute",
+        description = "基础指令-清除群所有成员警告"
+                                         ) {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@VoteMuteCommand, group)) return
+            //TODO:完成投票禁言
+            
+        }
+    }
+    
+    class AgreeVoteCommand : SimpleCommand(
+        PluginMain, "agreevote",
+        description = "基础指令-赞成投票"
+                                          ){
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()){
+            if (dontHasNormalCommandPermission(this@AgreeVoteCommand, group)) return
+            //TODO:完成赞成投票
+        }
+    }
+    
+    
+    //有问题未定义完整的指令
     class SendAnnouncementCommand : SimpleCommand(
         PluginMain, "sendAnnouncement",
         description = "基础指令-发送群公告"
@@ -259,7 +363,8 @@ object Commands {
             sendToNewMember: Boolean = false,
             showEditCard: Boolean = false,
             showPopup: Boolean = false,
-            requireConfirmation: Boolean = false, pic: Image? = null
+            requireConfirmation: Boolean = false,
+            pic: Image? = null
         
                                            ) {
             if (dontHasNormalCommandPermission(this@SendAnnouncementCommand, group)) return
@@ -273,8 +378,7 @@ object Commands {
                 var uploadedimage: AnnouncementImage? = null
                 if (url != null) {
                     uploadedimage = group!!.announcements.uploadImage(
-                        PostUtil().build { url(url) }.toByteArray()
-                            .toExternalResource()
+                        PostUtil().build { url(url) }.toByteArray().toExternalResource()
                                                                      )
                 }
                 
