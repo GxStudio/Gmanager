@@ -334,6 +334,7 @@ object Commands {
             if (dontHasNormalCommandPermission(this@VoteMuteCommand, group)) return
             //TODO:完成投票禁言
             
+            
         }
     }
     
