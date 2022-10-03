@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.13.0-dev-057708e6"
+    id("net.mamoe.mirai-console") version "2.13.0-RC-dev-693fdccc"
 }
 
 group = "cc.gxstudio"
