@@ -180,6 +180,7 @@ object Commands {
         PluginMain, "recallrecent",
         description = "基础指令-撤回最近的N条消息"
                                                     ) {
+        @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO:完成撤回最近消息参数
             if (dontHasNormalCommandPermission(this@recallMessageRecentCommand, group)) return
             //TODO:完成撤回最近消息
@@ -192,6 +193,7 @@ object Commands {
         PluginMain, "changeallnick",
         description = "基础指令-一键改名"
                                               ) {
+        @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@changeAllNickCommand, group)) return
             //TODO:完成修改群名片
@@ -202,6 +204,7 @@ object Commands {
         PluginMain, "stopChangeAllNick",
         description = "基础指令-停止一键改名"
                                                   ) {
+        @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@stopChangeAllNickCommand, group)) return
             //TODO:完成停止修改群名片
@@ -212,8 +215,18 @@ object Commands {
         PluginMain, "changeNick",
         description = "基础指令-修改指定群员名片"
                                                    ) {
+        @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
             if (dontHasNormalCommandPermission(this@changeMemberNickCommand, group)) return
+            //TODO:完成修改指定群员 群名片
+        }
+    }
+    
+    class changeCorrectNickCommand() :
+        SimpleCommand(PluginMain, "changecorrectnick", description = "基础指令-格式化指定群员名片") {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
+            if (dontHasNormalCommandPermission(this@changeCorrectNickCommand, group)) return
             //TODO:完成修改指定群员 群名片
         }
     }
@@ -341,11 +354,21 @@ object Commands {
     class AgreeVoteCommand : SimpleCommand(
         PluginMain, "agreevote",
         description = "基础指令-赞成投票"
-                                          ){
+                                          ) {
         @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()){
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@AgreeVoteCommand, group)) return
             //TODO:完成赞成投票
+        }
+    }
+    
+    class DeleteVoteCommand() : SimpleCommand(
+        PluginMain, "deletevotecommand", description = "基础指令-删除投票"
+                                             ) {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@DeleteVoteCommand, group)) return
+            //TODO:完成删除投票
         }
     }
     
@@ -400,6 +423,83 @@ object Commands {
         
     }
     
+    class SetMemberTitleCommand() :
+        SimpleCommand(PluginMain, "setmembertitle", description = "基础指令-设置群成员头衔") {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@SetMemberTitleCommand, group)) return
+            
+        }
+        
+    }
+    
+    class DeleteMemberTitleCommand() :
+        SimpleCommand(PluginMain, "deletemembertitle", description = "基础指令-删除群成员头衔") {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@DeleteMemberTitleCommand, group)) return
+            
+        }
+        
+    }
+    
+    class DeleteGroupMessageCommand() :
+        SimpleCommand(PluginMain, "deletegroupmessage", description = "基础指令-撤回（回复的）指定消息") {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@DeleteGroupMessageCommand, group)) return
+            
+        }
+    }
+    
+    class DeleteRecentMessageCommand() :
+        SimpleCommand(PluginMain, "deleterecentmessage", description = "基础指令-撤回最近消息") {
+        @Handler
+        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+            if (dontHasNormalCommandPermission(this@DeleteRecentMessageCommand, group)) return
+            
+        }
+    }
+    
+    class PermissionCommands() // 完成LP的简单设置处理指令
+    
+    class ReviewListCommands() {
+        // 完成黑白名单的简单设置处理指令
+        //全局黑白审查名单
+        class GlobalReviewListCommands() {
+            class GlobalBlackListCommand() :
+                SimpleCommand(PluginMain, "globalblacklist", description = "基础指令-全局黑名单") {
+                @Handler
+                
+                suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+                    if (dontHasNormalCommandPermission(this@GlobalBlackListCommand, group)) return
+                    
+                }
+            }
+            
+            class GlobalWhiteListCommand() :
+                SimpleCommand(PluginMain, "globalwhitelist", description = "基础指令-全局白名单") {
+                //todo:修改为子指令合集
+            }
+        }
+        
+        //群黑白审查名单
+        class GroupReviewListCommands() {
+            class GroupBlackListCommand() :
+                SimpleCommand(PluginMain, "groupblacklist", description = "基础指令-群黑名单") {
+                
+            }
+            
+            class GroupWhiteListCommand() :
+                SimpleCommand(PluginMain, "groupwhitelist", description = "基础指令-群白名单") {
+                
+            }
+        }
+    }
+    
+    class ReviewTriggerCommands() {//黑白名单相关触发操作
+    
+    }
     
 }
 

@@ -17,25 +17,25 @@ repositories {
     maven("https://repo.mirai.mamoe.net/snapshots")
 }
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:2.0.2")
-    implementation("io.ktor:ktor-server-netty-jvm:2.0.2")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:2.0.2")
+    implementation("io.ktor:ktor-server-core-jvm:2.1.1")
+    implementation("io.ktor:ktor-server-netty-jvm:2.1.1")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:2.1.1")
     
     
-    implementation("io.fusionauth:fusionauth-jwt:5.2.0")
-    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("io.fusionauth:fusionauth-jwt:5.2.1")
+    implementation("com.google.code.gson:gson:2.10")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     
     implementation("com.google.zxing:core:3.5.0")
     implementation("com.google.zxing:javase:3.5.0")
     
-    implementation("io.ktor:ktor-server-status-pages:2.0.2")
-    implementation("io.ktor:ktor-server-default-headers:2.0.2")
+    implementation("io.ktor:ktor-server-status-pages:2.1.2")
+    implementation("io.ktor:ktor-server-default-headers:2.1.2")
 //    implementation ("io.ktor:ktor-server-core:1.5.2")
 //    implementation ("io.ktor:ktor-server-netty:1.5.2")
 //    implementation ("io.ktor:ktor-serialization:1.5.2")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
-    implementation("mysql:mysql-connector-java:8.0.29")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("mysql:mysql-connector-java:8.0.30")
     compileOnly("net.luckperms:api:5.4")
 }
