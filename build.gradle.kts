@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.13.0-RC-dev-693fdccc"
+    id("net.mamoe.mirai-console") version "2.13.0-RC2"
 }
 
 group = "cc.gxstudio"
@@ -17,9 +17,9 @@ repositories {
     maven("https://repo.mirai.mamoe.net/snapshots")
 }
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:2.1.1")
-    implementation("io.ktor:ktor-server-netty-jvm:2.1.1")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:2.1.1")
+    implementation("io.ktor:ktor-server-core-jvm:2.1.2")
+    implementation("io.ktor:ktor-server-netty-jvm:2.1.2")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:2.1.2")
     
     
     implementation("io.fusionauth:fusionauth-jwt:5.2.1")
