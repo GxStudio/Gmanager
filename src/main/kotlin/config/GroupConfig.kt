@@ -6,16 +6,16 @@ import net.mamoe.mirai.console.data.AutoSavePluginConfig
 
 class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
     @Serializable
-    public data class GroupData(val CollectGroupData: Boolean)
+    data class GroupData(val CollectGroupData: Boolean)
     
     @Serializable
-    public data class GroupSettings(
+    data class GroupSettings(
         val voteSettings: VoteSettings,
         val warnSettings: WarnSettings,
         val otherSettings: OtherSettings
                                    ) {
         @Serializable
-        public data class VoteSettings(
+        data class VoteSettings(
             val votePerDay: Int,
             val createVotePerDay: Int,
             val voteTime: Int,
@@ -39,7 +39,7 @@ class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
         }
         
         @Serializable
-        public data class WarnSettings(
+        data class WarnSettings(
             val muteTime: Long,
             val enableKick: Boolean,
             val maxWarn: Int,
@@ -48,7 +48,7 @@ class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
                                       )
         
         @Serializable
-        public data class OtherSettings(
+        data class OtherSettings(
             val quitToBlackList: Boolean,
             val kickToBlacklist: Boolean,
             val afterKickDeleteMsgAmount: Int,
@@ -60,7 +60,7 @@ class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
     }
     
     @Serializable
-    public data class GroupHintMsg(
+    data class GroupHintMsg(
         val sendInGroupMsg: SendInGroupMsg,
         val sendInPrivateMsg: SendInPrivateMsg,
         val sendMailMessage: SendMailMessage
@@ -118,7 +118,7 @@ class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
     }
     
     @Serializable
-    public data class GroupMsgSpamCheck(
+    data class GroupMsgSpamCheck(
         val contentReview: ContentReview,
         val msgFloodReview: MsgFloodReview,
         val fileUploadCheck: FileUploadReview,
@@ -174,7 +174,7 @@ class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
     }
     
     @Serializable
-    public data class GroupMemberAutoNick(
+    data class GroupMemberAutoNick(
         val nickFormartSettings: NickFormartSettings,
         val nickChangeSettings: NickChangeSettings
                                          ) {
@@ -221,7 +221,9 @@ class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
     }
     
     @Serializable
-    public data class GroupJoinMemberReview(val refuseReason: RefuseReason) {
+    data class GroupJoinMemberReview(
+        val refuseReason: RefuseReason
+                                           ) {
         @Serializable
         data class RefuseReason(
             val defaultReason: String,
@@ -231,6 +233,8 @@ class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
         
         @Serializable
         data class ReviewSettings(
+            val reviewType: ReviewType,
+            
             val refuseOverlapJoin: RefuseOverlapJoin,
             val refuseGenders: RefuseGenders,
             val refuseBlackList: Boolean,
@@ -252,13 +256,18 @@ class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
             ) {
             
             @Serializable
+            data class ReviewType(
+                val type: ReviewTypes
+                                 )
+            
+            @Serializable
             data class RefuseOverlapJoin(
                 val enable: Boolean,
                 val groupList: List<Long>
                                         )
             
             @Serializable
-            public data class RefuseGenders(
+            data class RefuseGenders(
                 val refuseMan: Boolean,
                 val refuseWoman: Boolean,
                 val refuseSexLess: Boolean
@@ -275,18 +284,199 @@ class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
                 val enable: Boolean,
                 val limitWeight: Int,
                 
-                val userLevel:Int,
-                val userIDLength:Int,
-                val userGroupRank:Int,
-                val userGroupJoinMonths:Int,
-                val haveJoinReason:Int,
+                val userLevel: Int,
+                val userIDLength: Int,
+                val userGroupRank: Int,
+                val userGroupJoinMonths: Int,
+                val haveJoinReason: Int,
                 
-                val dontRefuse:Boolean
+                val dontRefuse: Boolean
                                    )
             
             
         }
     }
     
+    @Serializable
+    data class GroupInviteStatistics(
+        val Enable: Boolean
     
+                                           )
+    
+    @Serializable
+    data class GroupScheduledTask(
+        val taskList: List<GroupTask>
+                                        ) {
+        
+        
+        @Serializable
+        data class GroupTask(
+            val taskAction: GroupTaskAction,
+            val taskTrigger: TaskTriggers.TaskTrigger
+                            ) {
+            interface GroupTaskAction
+            
+            @Serializable
+            data class SendMessageType(
+                val msgText: String,
+                                      ) : GroupTaskAction
+            
+        }
+        
+        
+        @Serializable
+        class TaskTriggers {
+            @Serializable
+            data class CycleTask(
+                override val enable: Boolean,
+                override val taskList: List<GroupTask>,
+                val cycleInterval: Int,//循环间隔，单位为分钟
+                override val timeLimitInterval: TimeInterval,
+                
+                ) :
+                TaskTrigger
+            
+            @Serializable
+            data class TimingTask(
+                override val enable: Boolean,
+                override val taskList: List<GroupTask>,
+                val time: Long,//时间戳，单位为毫秒
+                override val timeLimitInterval: TimeInterval,
+                                        ) :
+                TaskTrigger
+            
+            
+            interface TaskTrigger {
+                val enable: Boolean
+                val taskList: List<GroupTask>
+                val timeLimitInterval: TimeInterval
+            }
+        }
+        
+    }
+    
+    @Serializable
+    data class GroupKickAndMuteAction(
+        val autoMuteAll: AutoMuteAll,
+        val kickSilenceJoinMember: KickSilenceJoinMember,
+        val kickOverlapJoin: KickOverlapJoin,
+        val controlMaxMember: ControlMaxMember
+                                            ) {
+        @Serializable
+        data class AutoMuteAll(
+            val muteActionList: List<MuteAction>
+                                     ) {
+            @Serializable
+            data class MuteAction(
+                val mode: Boolean, //true为禁言，false为解除禁言
+                val time: Int//执行时间
+                                 )
+            
+        }
+        
+        @Serializable
+        data class KickSilenceJoinMember(
+            val enable: Boolean,
+            val time: Int,//执行时间,单位为分钟
+            
+            val remindSpeak: RemindSpeak,
+            
+            val blackListAfterKick: Boolean
+                                               ) {
+            @Serializable
+            data class RemindSpeak(
+                val enable: Boolean,
+                val time: Int//执行时间,单位为分钟
+                                  )
+        }
+        
+        @Serializable
+        data class KickOverlapJoin(
+            val enable: Boolean,
+            val blackListAfterKick: Boolean,
+            val inspectionInterval: Int,//检查间隔，单位为分钟
+            val checkGroupList: List<Long>
+                                         )
+        
+        @Serializable
+        data class ControlMaxMember(
+            val enable: Boolean,
+            val maxMember: Int,
+            val inspectionInterval: Int,//检查间隔，单位为分钟
+            val sendMsgBeforeKick: String,
+            
+            val newMemberProtect: NewMemberProtect,
+            val kickWhenMemberJoin: Boolean,
+            val blackListAfterKick: Boolean,
+            val kickCondition: KickCondition,
+            
+            val kickNoSpeechForLongestTime: Boolean
+                                          ) {
+            @Serializable
+            data class NewMemberProtect(
+                val enable: Boolean,
+                val time: Int//保护时间，单位为分钟
+                                       )
+            
+            @Serializable
+            data class KickCondition(
+                val silenceJoin: SilenceJoin,
+                val getPointInDays: GetPointInDays,
+                val kickJoinInTimeInterval: KickJoinInTimeInterval
+                                    ) {
+                @Serializable
+                data class SilenceJoin(
+                    val enable: Boolean,
+                    val time: Int//时间段，默认为天数
+                                      )
+                
+                @Serializable
+                data class GetPointInDays(
+                    val enable: Boolean,
+                    val point: Int,
+                    val time: Int //指定时间内，单位为日
+                                         )
+                
+                @Serializable
+                data class KickJoinInTimeInterval(
+                    val enable: Boolean,
+                    val timeInterval: TimeInterval
+                                                 )
+                
+            }
+            
+        }
+    }
+    
+    @Serializable
+    data class QandA(val enable: Boolean, val qaList: List<qa>) {
+        @Serializable
+        data class qa(
+            val Q: String,
+            val A: String,
+            val enable: Boolean,
+            val matchPattern: TextMatchPattern
+                            )
+    }
+    
+}
+
+@Serializable
+data class TimeInterval(
+    val start: Int,
+    val end: Int
+                       )
+
+@Serializable
+enum class TextMatchPattern {
+    FUZZY,//模糊
+    PERFECT,//完全
+    REGULAR//正则
+}
+enum class ReviewTypes {
+    ACCESS,
+    REFUSE,
+    IGNORE,
+    MANUAL,
+    AUTOCHECK
 }
