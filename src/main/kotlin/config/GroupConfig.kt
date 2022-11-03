@@ -4,7 +4,7 @@ import cc.gxstudio.gmanager.management.Penalties
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 
-class GroupConfig(groupid: String) : AutoSavePluginConfig("group/$groupid") {
+class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("group/$groupId") {
     @Serializable
     data class GroupData(val CollectGroupData: Boolean)
     
@@ -473,6 +473,15 @@ enum class TextMatchPattern {
     PERFECT,//完全
     REGULAR//正则
 }
+@Serializable
+enum class HandleTypes{
+    ACCESS,
+    REFUSE,
+    IGNORE,
+    MANUAL
+}
+
+@Serializable
 enum class ReviewTypes {
     ACCESS,
     REFUSE,
