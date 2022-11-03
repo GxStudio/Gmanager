@@ -3,10 +3,23 @@ package cc.gxstudio.gmanager.management
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Penalties{
-    data class Mute(val time: Int): Penalties()
-    data class Kick(val reason: String): Penalties()
-    data class Ban(val time: Int): Penalties()
-    data class Warn(val reason: String): Penalties()
+sealed class Penalties {
+    interface Penaltie
+    @Serializable
+    class Mute(val time: Int) :Penaltie
+    
+    @Serializable
+    class Kick(val reason: String) :Penaltie
+    
+    @Serializable
+    class Ban(val time: Int) :Penaltie
+    
+    
+    @Serializable
+    class Warn(val reason: String) :Penaltie
+    
+    @Serializable
+    class INGORE  :Penaltie
+    
 }
 

@@ -1,6 +1,8 @@
 package cc.gxstudio.gmanager.config
 
+import cc.gxstudio.gmanager.management.Penalties
 import kotlinx.serialization.Serializable
+import net.mamoe.mirai.console.command.Command
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 
 class GlobalConfig() : AutoSavePluginConfig("global") {
@@ -61,7 +63,45 @@ class GlobalConfig() : AutoSavePluginConfig("global") {
             val message: String
                                  )//好友添加后发送的消息,仅发送一次
         
-
+        
+    }
+    
+    @Serializable
+    data class ReviewSettings(
+        val globalReviewProject: ReviewProject,
+        val reviewProject: List<ReviewProject>
+                             ) {
+        @Serializable
+        data class ReviewProject(
+            val reviewMethods: List<ReviewMethod>,
+                                ) {
+            @Serializable
+            data class ReviewMethod(
+                val word: String,
+                val penalties: Penalties,
+                val auditFreeWord: Boolean,
+                val tellAdmin: Boolean,
+                val clearScreen: Boolean
+                                   )
+        }
+    }
+    
+    @Serializable
+    data class CommandSettings(
+        val commadList: List<Command>
+                              ) {
+        @Serializable
+        data class Command(
+            val commandPrimaryName: String,
+            val alias: List<String>
+                          )
+    }
+    @Serializable
+    data class HintSettings(val hint: HintMsg) {
+        @Serializable
+        data class HintMsg(
+            val hint: String
+                          )
     }
 }
 

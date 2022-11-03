@@ -1,10 +1,212 @@
 package cc.gxstudio.gmanager.config
 
+import cc.gxstudio.gmanager.config.GroupConfig.GroupSettings.VoteSettings.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupHintMsg.SendInGroupMsg.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupHintMsg.SendInPrivateMsg.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupHintMsg.SendMailMsg.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupMemberAutoNick.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupMemberAutoNick.NickChangeSettings.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupJoinMemberReview.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupJoinMemberReview.ReviewSettings.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupMsgSpamCheck.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupMsgSpamCheck.MsgFloodReview.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupKickAndMuteAction.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupKickAndMuteAction.KickSilenceJoinMember.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupKickAndMuteAction.ControlMaxMember.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupKickAndMuteAction.ControlMaxMember.KickCondition.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupSettings.*
+import cc.gxstudio.gmanager.config.GroupConfig.GroupHintMsg.*
 import cc.gxstudio.gmanager.management.Penalties
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.value
 
-class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("group/$groupId") {
+class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("group/$groupId") {
+    
+    val groupData by value(GroupData(false))
+    val groupSettings by value(
+        GroupSettings(
+            VoteSettings(
+                0, 0, 0,
+                VoteMute(false, 0, 0),
+                VoteKick(false, 0, false)
+                        ),
+            WarnSettings(
+                0, false, 3,
+                afterKickClearWarn = true,
+                afterKickBlackList = false
+                        ),
+            OtherSettings(
+                quitToBlackList = false,
+                kickToBlacklist = false,
+                afterKickDeleteMsgAmount = 5,
+                BlackListToGlobal = false,
+                joinWithMuteTime = 5,
+                stopRepeat = false,
+                stopRepeatAmount = 5
+                         )
+                     )
+                              )
+    
+    val groupHintMsg by value(
+        GroupHintMsg(
+            SendInGroupMsg(
+                JoinMsg(false, "", false),
+                QuitMsg(false, "", false),
+                KickMsg(false, "", false),
+                FileUploadMsg(false, "", false),
+                AddManagerMsg(false, "", false),
+                RemoveManagerMsg(false, "", false),
+                ""
+                          ),
+            SendInPrivateMsg(
+                MemberJoinMsg(false, "", false),
+                MemberBeManagerMsg(false, "", false),
+                ManagerCancelledMsg(false, "", false)
+                            ),
+            SendMailMsg(
+                JoinGroup(false, "")
+                       )
+                    )
+                             )
+    val groupMsgSpamCheck by value(
+        GroupMsgSpamCheck(
+            ContentReview(
+                false, -1,
+                useGlobalProject = false,
+                checkTraditionalChinese = false,
+                ocrCheck = false,
+                similarTextCheck = false,
+                qrCodeCheck = false,
+                deleteMsg = false,
+                voiceCheck = false
+                         ),
+            MsgFloodReview(
+                false,
+                sendMsgLimit = SendMsgLimit(false, 3, 3),
+                textLengthMaxlimit = 4500,
+                lineMaxLimit = 12,
+                repeatLimit = 114514,
+                noBlankText = false,
+                imagePerMsg = 5,
+                continuouslySendImageTimes = 5,
+                penaltie = Penalties.INGORE(),
+                deleteMsg = false,
+                deleteFirstFloodMsg = false,
+                clearScreen = false,
+                shortMsgCode = false
+                                            ),
+            FileUploadReview(
+                fileFormatCheckMode = false,
+                fileFormat = listOf("avi", "exe", "rar"), fileSizeLimit = 1024 * 1024 * 1024,
+                fileNameNotAllowed = listOf("国产"),
+                fileUploadLimit = 100,
+                penaltie = Penalties.INGORE(),
+                deleteFile = false
+                                              ),
+            AutoDeleteReview(
+                tellAdmin = true
+                                              )
+                         )
+                                  )
+    val groupMemberAutoNick by value(
+        GroupMemberAutoNick(
+            NickFormartSettings(
+                formartText = "[G]-{name}",
+                useRemarkInfo = false,
+                maxLength = 20,
+                blankLocationReplace = "地球",
+                manName = "男",
+                womanName = "女",
+                sexLessReplace = "？"
+                                                   ),
+            NickChangeSettings(
+                detectionCycleTime = 20,
+                NickCorrectionTrigger(
+                    timingCorrection = false,
+                    joinCorrection = false,
+                    msgSendCorrection = false
+                                                                            ),
+                NickWhiteList(listOf(""), listOf(0)),
+                NickMonitorSettings(listOf("卖片"), "")
+                                                  )
+                           )
+                                    )
+    val groupJoinMemberReview by value(
+        GroupJoinMemberReview(
+            RefuseReason(
+                defaultReason = "",
+                customReason = false,
+                customReasonList = mapOf()
+                                              ),
+            ReviewSettings(
+                ReviewType(ReviewTypes.IGNORE),
+                RefuseOverlapJoin(false, listOf()),
+                RefuseGenders(
+                    refuseMan = false,
+                    refuseWoman = false,
+                    refuseSexLess = false
+                                                                  ),
+                refuseBlackList = false,
+                allowWhiteList = true,
+                refuseNeverSpeakMemberInvite = true,
+                refuseAgeLessThan = 0,
+                refuseAgeMoreThan = 99,
+                ReasonCheck(false, listOf()),
+                refuseNameWithWords = listOf(),
+                refuseSignWithWords = listOf(),
+                WeightAccess(
+                    false,
+                    limitWeight = 0,
+                    userLevel = 0,
+                    userIDLength = 0,
+                    userGroupRank = 0,
+                    userGroupJoinMonths = 0,
+                    haveJoinReason = 0,
+                    dontRefuse = true
+                                                                 )
+            
+            
+                                                )
+                             )
+                                      )
+    val groupInviteStatistics by value(GroupInviteStatistics(false))
+    val groupScheduledTask by value(GroupScheduledTask(listOf()))
+    val groupKickAndMuteAction by value(
+        GroupKickAndMuteAction(
+            
+            AutoMuteAll(listOf()),
+            KickSilenceJoinMember(
+                false, 60,
+                RemindSpeak(false, 3),
+                blackListAfterKick = false
+                                 ),
+            KickOverlapJoin(
+                enable = false,
+                blackListAfterKick = false,
+                inspectionInterval = 5,
+                checkGroupList = listOf()
+                                                  ),
+            ControlMaxMember(
+                enable = false, maxMember = 5000,
+                inspectionInterval = 5,
+                sendMsgBeforeKick = "",
+                NewMemberProtect(false, 5),
+                kickWhenMemberJoin = true,
+                blackListAfterKick = false,
+                KickCondition(
+                    SilenceJoin(false, 3),
+                    GetPointInDays(false, 10, 3),
+                    KickJoinInTimeInterval(
+                        false, TimeInterval(1, 5)
+                                                        ),
+                             ),
+                kickNoSpeechForLongestTime = true
+                                                   )
+                              )
+                                       )
+    val qANDa by value(QandA(false, listOf()))
+    
     @Serializable
     data class GroupData(val CollectGroupData: Boolean)
     
@@ -13,14 +215,15 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
         val voteSettings: VoteSettings,
         val warnSettings: WarnSettings,
         val otherSettings: OtherSettings
-                                   ) {
+                            ) {
         @Serializable
         data class VoteSettings(
             val votePerDay: Int,
             val createVotePerDay: Int,
             val voteTime: Int,
-            val voteMute: VoteMute
-                                      ) {
+            val voteMute: VoteMute,
+            val voteKick: VoteKick
+                               ) {
             @Serializable
             data class VoteMute(
                 val enable: Boolean,
@@ -45,7 +248,7 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
             val maxWarn: Int,
             val afterKickClearWarn: Boolean,
             val afterKickBlackList: Boolean
-                                      )
+                               )
         
         @Serializable
         data class OtherSettings(
@@ -53,24 +256,28 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
             val kickToBlacklist: Boolean,
             val afterKickDeleteMsgAmount: Int,
             val BlackListToGlobal: Boolean,
-            val joinWithMuteTime: Int,
+            val joinWithMuteTime: Int,//加群时禁言时间
+            
             val stopRepeat: Boolean,
             val stopRepeatAmount: Int,
-                                       )
+                                )
     }
     
     @Serializable
     data class GroupHintMsg(
         val sendInGroupMsg: SendInGroupMsg,
         val sendInPrivateMsg: SendInPrivateMsg,
-        val sendMailMessage: SendMailMessage
+        val sendMailMessage: SendMailMsg
     
-                                  ) {
+                           ) {
         @Serializable
         data class SendInGroupMsg(
             val joinMsg: JoinMsg,
             val quitMsg: QuitMsg,
             val kickMsg: KickMsg,
+            val fileUploadMsg: FileUploadMsg,
+            val addManagerMsg: AddManagerMsg,
+            val removeManagerMsg: RemoveManagerMsg,
             val ClearScreenMessage: String
                                  ) {
             @Serializable
@@ -110,7 +317,7 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
         }
         
         @Serializable
-        data class SendMailMessage(val joinGroup: JoinGroup) {
+        data class SendMailMsg(val joinGroup: JoinGroup) {
             @Serializable
             data class JoinGroup(val Enable: Boolean, val Msg: String)
         }
@@ -123,11 +330,11 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
         val msgFloodReview: MsgFloodReview,
         val fileUploadCheck: FileUploadReview,
         val autoDeleteReview: AutoDeleteReview
-                                       ) {
+                                ) {
         @Serializable
         data class ContentReview(
             val enable: Boolean,
-            val reviewProject: Long,
+            val reviewProject: Long,//-1为未定义
             val useGlobalProject: Boolean,
             val checkTraditionalChinese: Boolean,
             val ocrCheck: Boolean,
@@ -140,22 +347,33 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
         @Serializable
         data class MsgFloodReview(
             val enable: Boolean,
-            val sendMsgLimit: Int,
-            val sendMsgPerSecondLimit: Int,
-            val TextLengthMaxlimit: Int,
+            val sendMsgLimit: SendMsgLimit,
+            val textLengthMaxlimit: Int,
             val lineMaxLimit: Int,
             val repeatLimit: Int,
             val noBlankText: Boolean,
             val imagePerMsg: Int,
             val continuouslySendImageTimes: Int,
             
-            val penaltie: Penalties,
+            val penaltie: Penalties.Penaltie,
             val deleteMsg: Boolean,
             val deleteFirstFloodMsg: Boolean,
             val clearScreen: Boolean,
             
             val shortMsgCode: Boolean,//将收到的图片等Mirai码进行缩短成2长度处理
-                                 )
+                                 ) {
+            @Serializable
+            data class SendMsgLimit(
+                val enable: Boolean,
+                val limit: Int,
+                /**时间长度，单位为秒*/
+                val time: Int
+                                   )
+            
+            fun test() {
+            
+            }
+        }
         
         @Serializable
         data class FileUploadReview(
@@ -164,7 +382,7 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
             val fileSizeLimit: Long,//文件大小限制，单位为字节
             val fileNameNotAllowed: List<String>,//不允许上传的文件名
             val fileUploadLimit: Int,//每个人每天上传文件的数量限制
-            val penaltie: Penalties,
+            val penaltie: Penalties.Penaltie,
             val deleteFile: Boolean,
                                    )
         
@@ -177,7 +395,7 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
     data class GroupMemberAutoNick(
         val nickFormartSettings: NickFormartSettings,
         val nickChangeSettings: NickChangeSettings
-                                         ) {
+                                  ) {
         @Serializable
         data class NickFormartSettings(
             val formartText: String,
@@ -191,6 +409,7 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
         
         @Serializable
         data class NickChangeSettings(
+            /**循环检测时间，单位为分钟*/
             val detectionCycleTime: Int,
             val nickCorrectionTrigger: NickCorrectionTrigger,
             val nickWhiteList: NickWhiteList,
@@ -222,13 +441,14 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
     
     @Serializable
     data class GroupJoinMemberReview(
-        val refuseReason: RefuseReason
-                                           ) {
+        val refuseReason: RefuseReason,
+        val reviewSettings: ReviewSettings
+                                    ) {
         @Serializable
         data class RefuseReason(
             val defaultReason: String,
             val customReason: Boolean,
-            val customReasonList: Map<Int, String>
+            val customReasonList: Map<Int, String>//todo:需要完成的拒绝理由列表
                                )
         
         @Serializable
@@ -271,11 +491,11 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
                 val refuseMan: Boolean,
                 val refuseWoman: Boolean,
                 val refuseSexLess: Boolean
-                                           )
+                                    )
             
             @Serializable
             data class ReasonCheck(
-                val mode: Boolean,
+                val mode: Boolean,//false为拒绝,true为允许
                 val reasonList: List<String>
                                   )
             
@@ -301,12 +521,12 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
     data class GroupInviteStatistics(
         val Enable: Boolean
     
-                                           )
+                                    )
     
     @Serializable
     data class GroupScheduledTask(
         val taskList: List<GroupTask>
-                                        ) {
+                                 ) {
         
         
         @Serializable
@@ -342,7 +562,7 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
                 override val taskList: List<GroupTask>,
                 val time: Long,//时间戳，单位为毫秒
                 override val timeLimitInterval: TimeInterval,
-                                        ) :
+                                 ) :
                 TaskTrigger
             
             
@@ -361,11 +581,11 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
         val kickSilenceJoinMember: KickSilenceJoinMember,
         val kickOverlapJoin: KickOverlapJoin,
         val controlMaxMember: ControlMaxMember
-                                            ) {
+                                     ) {
         @Serializable
         data class AutoMuteAll(
             val muteActionList: List<MuteAction>
-                                     ) {
+                              ) {
             @Serializable
             data class MuteAction(
                 val mode: Boolean, //true为禁言，false为解除禁言
@@ -382,7 +602,7 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
             val remindSpeak: RemindSpeak,
             
             val blackListAfterKick: Boolean
-                                               ) {
+                                        ) {
             @Serializable
             data class RemindSpeak(
                 val enable: Boolean,
@@ -396,7 +616,7 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
             val blackListAfterKick: Boolean,
             val inspectionInterval: Int,//检查间隔，单位为分钟
             val checkGroupList: List<Long>
-                                         )
+                                  )
         
         @Serializable
         data class ControlMaxMember(
@@ -411,7 +631,7 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
             val kickCondition: KickCondition,
             
             val kickNoSpeechForLongestTime: Boolean
-                                          ) {
+                                   ) {
             @Serializable
             data class NewMemberProtect(
                 val enable: Boolean,
@@ -449,14 +669,14 @@ class GroupConfig(groupId: String, fatherGroup:Long) : AutoSavePluginConfig("gro
     }
     
     @Serializable
-    data class QandA(val enable: Boolean, val qaList: List<qa>) {
+    data class QandA(val enable: Boolean, val qaList: List<QA>) {
         @Serializable
-        data class qa(
+        data class QA(
             val Q: String,
             val A: String,
             val enable: Boolean,
             val matchPattern: TextMatchPattern
-                            )
+                     )
     }
     
 }
@@ -473,8 +693,9 @@ enum class TextMatchPattern {
     PERFECT,//完全
     REGULAR//正则
 }
+
 @Serializable
-enum class HandleTypes{
+enum class HandleTypes {
     ACCESS,
     REFUSE,
     IGNORE,
