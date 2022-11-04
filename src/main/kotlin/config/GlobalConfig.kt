@@ -1,14 +1,13 @@
 package cc.gxstudio.gmanager.config
 
 import cc.gxstudio.gmanager.config.GlobalConfig.BasicSettings.*
-import cc.gxstudio.gmanager.config.GlobalConfig.ReviewSettings.*
-import cc.gxstudio.gmanager.config.GlobalConfig.OtherSettings.*
+import cc.gxstudio.gmanager.config.GlobalConfig.OtherSettings.MailSettings
+import cc.gxstudio.gmanager.config.GlobalConfig.ReviewSettings.ReviewProject
 import cc.gxstudio.gmanager.management.Penalties
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.command.Command
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.value
-import org.graalvm.compiler.nodes.TypeCheckHints.Hint
 
 class GlobalConfig() : AutoSavePluginConfig("global") {
     val basicSettings by value(
