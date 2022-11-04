@@ -1,11 +1,62 @@
 package cc.gxstudio.gmanager.config
 
+import cc.gxstudio.gmanager.config.GlobalConfig.BasicSettings.*
+import cc.gxstudio.gmanager.config.GlobalConfig.ReviewSettings.*
+import cc.gxstudio.gmanager.config.GlobalConfig.OtherSettings.*
 import cc.gxstudio.gmanager.management.Penalties
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.command.Command
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
+import net.mamoe.mirai.console.data.value
+import org.graalvm.compiler.nodes.TypeCheckHints.Hint
 
 class GlobalConfig() : AutoSavePluginConfig("global") {
+    val basicSettings by value(
+        BasicSettings(
+            enableGroups = listOf(),
+            enableGroup = true,
+            enablePrivate = true,
+            
+            autoDeleteFirend = false,
+            BeMutedThanMinLeave(false, 1200),
+            nickAutoChangeTime = 20,
+            MessageQueue(
+                true,
+                maxMsgsSize = 10,
+                maxMsgsTime = 10,
+                splitLine = "----------------"
+                        ),
+            EventNotification(
+                joinGroup = true,
+                leaveGroup = true,
+                beKicked = true,
+                beManager = true,
+                cancelManager = true,
+                firendAdded = false
+                             )
+                     )
+                              )
+    
+    val reviewSettings by value(
+        ReviewSettings(
+            globalReviewProject = ReviewProject(listOf()),
+            reviewProject = listOf()
+                      )
+                               )
+    
+    val commandSettings by value(CommandSettings(listOf()))
+    val hintSettings by value(HintSettings(listOf()))
+    val otherSettings by value(
+        MailSettings(
+            false,
+            "smtp.qq.com",
+            465,
+            "",
+            "",
+            ssl = true
+                    )
+                              )
+    
     @Serializable
     data class BasicSettings(
         val enableGroups: List<Long>,
@@ -13,13 +64,19 @@ class GlobalConfig() : AutoSavePluginConfig("global") {
         val enablePrivate: Boolean,
         
         val autoDeleteFirend: Boolean,
-        val beMutedThanMinLeave: Int,//被禁言多少分钟后自动退群
+        val beMutedThanMinLeave: BeMutedThanMinLeave,//被禁言多少分钟后自动退群
         val nickAutoChangeTime: Int,//昵称自动更改最小间隔
         
         val messageQueue: MessageQueue,
         
         val eventNotification: EventNotification,
                             ) {
+        @Serializable
+        data class BeMutedThanMinLeave(
+            val enable: Boolean,
+            val min: Int//分钟
+                                      )
+        
         @Serializable
         data class MessageQueue(
             val enable: Boolean,
@@ -96,13 +153,32 @@ class GlobalConfig() : AutoSavePluginConfig("global") {
             val alias: List<String>
                           )
     }
+    
     @Serializable
-    data class HintSettings(val hint: HintMsg) {
+    data class HintSettings(val hint: List<HintMsg>) {
         @Serializable
         data class HintMsg(
-            val hint: String
+            val hint: Hints,
+            val text: String
                           )
     }
+    
+    @Serializable
+    data class OtherSettings(val mailSettings: MailSettings) {
+        @Serializable
+        data class MailSettings(
+            val enable: Boolean,
+            val host: String, val port: Int,
+            val mail: String,
+            val password: String,
+            val ssl: Boolean
+                               )
+    }
+}
+
+enum class Hints {
+
+
 }
 
 @Serializable

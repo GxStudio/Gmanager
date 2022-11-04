@@ -21,8 +21,8 @@ import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.value
 
-class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("group/$groupId") {
-    
+class GroupConfig(groupId: String) : AutoSavePluginConfig("group/$groupId") {
+    val fatherGroup by value<Long>()
     val groupData by value(GroupData(false))
     val groupSettings by value(
         GroupSettings(
@@ -95,7 +95,7 @@ class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("gr
                 deleteFirstFloodMsg = false,
                 clearScreen = false,
                 shortMsgCode = false
-                                            ),
+                          ),
             FileUploadReview(
                 fileFormatCheckMode = false,
                 fileFormat = listOf("avi", "exe", "rar"), fileSizeLimit = 1024 * 1024 * 1024,
@@ -103,10 +103,10 @@ class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("gr
                 fileUploadLimit = 100,
                 penaltie = Penalties.INGORE(),
                 deleteFile = false
-                                              ),
+                            ),
             AutoDeleteReview(
                 tellAdmin = true
-                                              )
+                            )
                          )
                                   )
     val groupMemberAutoNick by value(
@@ -119,17 +119,17 @@ class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("gr
                 manName = "男",
                 womanName = "女",
                 sexLessReplace = "？"
-                                                   ),
+                               ),
             NickChangeSettings(
                 detectionCycleTime = 20,
                 NickCorrectionTrigger(
                     timingCorrection = false,
                     joinCorrection = false,
                     msgSendCorrection = false
-                                                                            ),
+                                     ),
                 NickWhiteList(listOf(""), listOf(0)),
                 NickMonitorSettings(listOf("卖片"), "")
-                                                  )
+                              )
                            )
                                     )
     val groupJoinMemberReview by value(
@@ -138,7 +138,7 @@ class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("gr
                 defaultReason = "",
                 customReason = false,
                 customReasonList = mapOf()
-                                              ),
+                        ),
             ReviewSettings(
                 ReviewType(ReviewTypes.IGNORE),
                 RefuseOverlapJoin(false, listOf()),
@@ -146,7 +146,7 @@ class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("gr
                     refuseMan = false,
                     refuseWoman = false,
                     refuseSexLess = false
-                                                                  ),
+                             ),
                 refuseBlackList = false,
                 allowWhiteList = true,
                 refuseNeverSpeakMemberInvite = true,
@@ -164,10 +164,8 @@ class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("gr
                     userGroupJoinMonths = 0,
                     haveJoinReason = 0,
                     dontRefuse = true
-                                                                 )
-            
-            
-                                                )
+                            )
+                          )
                              )
                                       )
     val groupInviteStatistics by value(GroupInviteStatistics(false))
@@ -186,7 +184,7 @@ class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("gr
                 blackListAfterKick = false,
                 inspectionInterval = 5,
                 checkGroupList = listOf()
-                                                  ),
+                           ),
             ControlMaxMember(
                 enable = false, maxMember = 5000,
                 inspectionInterval = 5,
@@ -199,10 +197,10 @@ class GroupConfig(groupId: String, fatherGroup: Long) : AutoSavePluginConfig("gr
                     GetPointInDays(false, 10, 3),
                     KickJoinInTimeInterval(
                         false, TimeInterval(1, 5)
-                                                        ),
+                                          ),
                              ),
                 kickNoSpeechForLongestTime = true
-                                                   )
+                            )
                               )
                                        )
     val qANDa by value(QandA(false, listOf()))
