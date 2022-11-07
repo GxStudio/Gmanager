@@ -40,8 +40,7 @@ object PluginMain : KotlinPlugin(
         author("作者名称或联系方式")
         info(
             """
-            这是一个测试插件, 
-            在这里描述插件的功能和用法等.
+            GxStudio制造。源于天枢群管家
         """.trimIndent()
         
             )
