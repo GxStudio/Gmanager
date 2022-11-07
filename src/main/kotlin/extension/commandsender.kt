@@ -1,5 +1,6 @@
 package cc.gxstudio.gmanager.extension
 
+import cc.gxstudio.gmanager.command.groupExist
 import cc.gxstudio.gmanager.globalvar.namespace
 import cc.gxstudio.gmanager.logutil.Log
 import net.mamoe.mirai.console.command.*
@@ -11,6 +12,8 @@ import net.mamoe.mirai.contact.Group
  * */
 suspend fun CommandSender.dontHasNormalCommandPermission(command: Command, group: Group?): Boolean =
     !hasNormalCommandPermission(command, group)
+
+fun CommandSender.groupExist():Boolean = groupExist(this.getGroupOrNull())
 
 /** 用于检查基础指令(指向群的指令)使用者是否拥有权限
  *

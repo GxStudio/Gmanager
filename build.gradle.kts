@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "1.6.10"
+    val kotlinVersion = "1.7.10"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "cc.gxstudio"
-version = "BETA"
+version = "beta-0.1.0"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
@@ -28,7 +28,7 @@ dependencies {
     
     implementation("com.google.zxing:core:3.5.0")
     implementation("com.google.zxing:javase:3.5.0")
-    
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4")
     implementation("io.ktor:ktor-server-status-pages:2.1.2")
     implementation("io.ktor:ktor-server-default-headers:2.1.2")
 //    implementation ("io.ktor:ktor-server-core:1.5.2")
@@ -37,5 +37,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("mysql:mysql-connector-java:8.0.30")
+    implementation("io.ktor:ktor-client-core:2.1.2")
+    implementation("io.ktor:ktor-client-okhttp:2.1.2")
+    implementation("io.ktor:ktor-http-cio:2.1.2")
     compileOnly("net.luckperms:api:5.4")
 }

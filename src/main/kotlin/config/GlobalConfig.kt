@@ -9,10 +9,10 @@ import net.mamoe.mirai.console.command.Command
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.value
 
-class GlobalConfig() : AutoSavePluginConfig("global") {
-    val basicSettings by value(
+object GlobalConfig : AutoSavePluginConfig("global") {
+    public val basicSettings by value(
         BasicSettings(
-            enableGroups = listOf(),
+            enableGroups = mutableListOf(),
             enableGroup = true,
             enablePrivate = true,
             
@@ -58,7 +58,7 @@ class GlobalConfig() : AutoSavePluginConfig("global") {
     
     @Serializable
     data class BasicSettings(
-        val enableGroups: List<Long>,
+        val enableGroups: MutableList<Long>,
         val enableGroup: Boolean,
         val enablePrivate: Boolean,
         

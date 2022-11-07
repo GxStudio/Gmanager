@@ -33,7 +33,7 @@ object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         id = "cc.gxstudio.gmanager",
         name = "G群管",
-        version = "2022.0"
+        version = "0.1.0"
                         ) {
         dependsOn("io.github.karlatemp.luckperms-mirai")
         dependsOn("net.mamoe.mirai.console.chat-command")

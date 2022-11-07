@@ -16,12 +16,23 @@ import cc.gxstudio.gmanager.config.GroupConfig.GroupKickAndMuteAction.ControlMax
 import cc.gxstudio.gmanager.config.GroupConfig.GroupKickAndMuteAction.ControlMaxMember.KickCondition.*
 import cc.gxstudio.gmanager.config.GroupConfig.GroupSettings.*
 import cc.gxstudio.gmanager.config.GroupConfig.GroupHintMsg.*
+import cc.gxstudio.gmanager.extension.getAllJoinedGroups
 import cc.gxstudio.gmanager.management.Penalties
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.value
+import net.mamoe.mirai.contact.Group
 
-class GroupConfig(groupId: String) : AutoSavePluginConfig("group/$groupId") {
+fun getGmanageConfig(group: Long): GroupConfig = groupConfigList[group]!!
+
+ var groupConfigList:MutableMap<Long, GroupConfig> = mutableMapOf()
+
+fun Group.getGConfig(): GroupConfig {
+    return getGmanageConfig(this.id)
+}
+
+
+class GroupConfig(groupId: Long) : AutoSavePluginConfig("group/$groupId") {
     val fatherGroup by value<Long>()
     val groupData by value(GroupData(false))
     val groupSettings by value(

@@ -2,23 +2,27 @@ package cc.gxstudio.gmanager.command
 
 import cc.gxstudio.gmanager.PluginMain
 import cc.gxstudio.gmanager.extension.dontHasNormalCommandPermission
+import cc.gxstudio.gmanager.extension.getAllJoinedGroups
 import cc.gxstudio.gmanager.http.PostUtil
-import cc.gxstudio.gmanager.management.Management
 import cc.gxstudio.gmanager.management.Management.cleanScreen
 import cc.gxstudio.gmanager.management.Management.closeManage
+import cc.gxstudio.gmanager.management.Management.kickMember
+import cc.gxstudio.gmanager.management.Management.muteAll
+import cc.gxstudio.gmanager.management.Management.muteMember
 import cc.gxstudio.gmanager.management.Management.openManage
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import net.mamoe.mirai.console.command.*
-import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.NormalMember
+import net.mamoe.mirai.contact.*
 import net.mamoe.mirai.contact.announcement.Announcement.Companion.publishAnnouncement
 import net.mamoe.mirai.contact.announcement.AnnouncementImage
 import net.mamoe.mirai.contact.announcement.AnnouncementParametersBuilder
-import net.mamoe.mirai.contact.nameCardOrNick
 import net.mamoe.mirai.message.data.AtAll
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
+import net.mamoe.mirai.message.data.MessageChain
+import net.mamoe.mirai.message.data.MessageSource.Key.recall
+import net.mamoe.mirai.message.data.QuoteReply
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 
 
@@ -31,12 +35,15 @@ object Commands {
         get() {
             val mlist = mutableListOf<Command>(
                 MuteCommand(),
+                UnMuteCommand(),
                 CleanCommand(),
                 KickCommand(),
                 OpenManagerCommand(),
                 OffManagerCommand(),
                 AtAllCommand(),
-                CheckCommand(),
+                
+                RecallMessageCommand(),
+                changeMemberNickCommand(),MuteAllCommand()
                 //SendAnnouncementCommand()
                 //SendGroupMessageCommand()
                                               )
@@ -59,8 +66,8 @@ object Commands {
         suspend fun CommandSender.onCommand(target: NormalMember, duration: Int) {
             
             if (dontHasNormalCommandPermission(this@MuteCommand, target.group)) return
-            Management.muteMember(target, duration)
-            sendGroupOrOtherMessage("已禁言${duration}秒")
+            muteMember(target, duration)
+            
         }
     }
     
@@ -70,10 +77,8 @@ object Commands {
                                        ) {
         @Handler
         suspend fun CommandSender.onCommand(target: NormalMember) {
-            
             if (dontHasNormalCommandPermission(this@UnMuteCommand, target.group)) return
-            Management.muteMember(target, 0)
-            sendGroupOrOtherMessage("已解除${target.nameCardOrNick}的禁言")
+            muteMember(target, 0)
         }
     }
     
@@ -84,11 +89,7 @@ object Commands {
         @Handler
         suspend fun CommandSender.onCommand(group: Group? = getGroupOrNull()) {//todo:完成修改全群禁言
             if (dontHasNormalCommandPermission(this@MuteAllCommand, group)) return
-            if (group != null) {
-                group.settings.isMuteAll = !(group.settings.isMuteAll)
-            } else {
-            
-            }
+            muteAll(group)
         }
     }
     
@@ -100,8 +101,8 @@ object Commands {
         @Handler
         suspend fun CommandSender.onCommand(target: NormalMember, reason: String? = null) {
             if (dontHasNormalCommandPermission(this@KickCommand, target.group)) return
-            Management.kickMember(target, reason)
-            sendGroupOrOtherMessage("已踢出${target.nameCardOrNick},原因：${reason}")//todo:自定义内容
+            kickMember(target, reason)
+            
         }
     }
     
@@ -165,14 +166,21 @@ object Commands {
     }
     
     //撤回消息
-    class recallMessageCommand : SimpleCommand(
+    class RecallMessageCommand : RawCommand(
         PluginMain, "recall",
-        description = "基础指令-撤回指定消息"
-                                              ) {
-        @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO:完成撤回消息参数
-            if (dontHasNormalCommandPermission(this@recallMessageCommand, group)) return
-            //TODO:完成撤回消息
+        description = "基础指令-撤回指定消息",
+        // usage ="[回复的消息] /recall"
+                                           ) {
+        
+        override suspend fun CommandContext.onCommand(args: MessageChain) {//TODO:完成撤回消息参数
+            val group = this.sender.getGroupOrNull()
+            if (this.sender.dontHasNormalCommandPermission(this@RecallMessageCommand, group)) return
+            for (msg in originalMessage) if (msg is QuoteReply) {
+                msg.source.recall()
+                sender.sendGroupOrOtherMessage("已撤回消息")
+                //todo:完成撤回消息通知管理
+                return
+            }
         }
     }
     
@@ -216,9 +224,14 @@ object Commands {
         description = "基础指令-修改指定群员名片"
                                                    ) {
         @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
+        suspend fun CommandSender.onCommand(
+            nick: String,
+            user: NormalMember,
+            group: Group? = this.getGroupOrNull()
+                                           ) {//TODO：完成参数
             if (dontHasNormalCommandPermission(this@changeMemberNickCommand, group)) return
-            //TODO:完成修改指定群员 群名片
+            //todo:完成群成员名片修改
+            user.nameCard = nick
         }
     }
     
@@ -227,7 +240,7 @@ object Commands {
         @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
             if (dontHasNormalCommandPermission(this@changeCorrectNickCommand, group)) return
-            //TODO:完成修改指定群员 群名片
+            //TODO:完成修改指定群员正确群名片
         }
     }
     
@@ -294,8 +307,9 @@ object Commands {
         description = "基础指令-警告群成员"
                                      ) {
         @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+        suspend fun CommandSender.onCommand(member :NormalMember,group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@WarnCommand, group)) return
+            
             //完成警告
             
         }
@@ -308,6 +322,8 @@ object Commands {
         @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@ClearMemberWarnCommand, group)) return
+            
+            
             //TODO:完成清除群成员警告
         }
     }
@@ -448,7 +464,6 @@ object Commands {
         @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@DeleteGroupMessageCommand, group)) return
-            
         }
     }
     
@@ -504,23 +519,39 @@ object Commands {
 }
 
 
-suspend fun CommandSender.sendGroupOrOtherMessage(message: String, group: Group? = getGroupOrNull()) {
-    if (Commands.varOfGroupNotExist(group)) sendMessage(message) else group!!.sendMessage(message)
+public suspend fun CommandSender.sendGroupOrOtherMessage(message: String, group: Group? = getGroupOrNull()) {
+    if (groupNotExist(group)) sendMessage(message) else group!!.sendMessage(message)
 }
 
 /**检查指令参数是否错误提供群组
  * 一般用于检查私聊/控制台使用指令时是否提供群号
- * @see Commands.varOfGroupExist
+ * @see groupExist
  * */
-fun Commands.varOfGroupNotExist(group: Group?): Boolean = !varOfGroupExist(group)
+fun groupNotExist(group: Group?): Boolean = !groupExist(group)
 
 /**检查指令参数是否正确提供群组
  *
  * 一般用于检查私聊/控制台使用指令时是否提供群号
  *@sample Commands.OpenManagerCommand
  *  */
-fun Commands.varOfGroupExist(group: Group?): Boolean = (group != null)
 
+
+suspend fun CommandSender.checkGroupExist(group: Group? = getGroupOrNull()): Boolean {
+    return if (groupExist(group)) true else {
+        sendGroupOrOtherMessage("群号提供错误。")
+        false
+    }
+}
+
+
+fun groupExist(group: Group?): Boolean =
+    if (group != null) {
+        joinedGroup(group)
+    } else false
+
+
+fun joinedGroup(group: Group): Boolean =
+    getAllJoinedGroups().contains(group)
 /*
 object AtParser : CommandValueArgumentParser<Array<NormalMember>> {
     override fun parse(raw: String, sender: CommandSender): Array<NormalMember> {
