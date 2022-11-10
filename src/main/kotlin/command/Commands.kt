@@ -4,12 +4,15 @@ import cc.gxstudio.gmanager.PluginMain
 import cc.gxstudio.gmanager.extension.dontHasNormalCommandPermission
 import cc.gxstudio.gmanager.extension.getAllJoinedGroups
 import cc.gxstudio.gmanager.http.PostUtil
+import cc.gxstudio.gmanager.logutil.Log
 import cc.gxstudio.gmanager.management.Management.cleanScreen
 import cc.gxstudio.gmanager.management.Management.closeManage
 import cc.gxstudio.gmanager.management.Management.kickMember
 import cc.gxstudio.gmanager.management.Management.muteAll
 import cc.gxstudio.gmanager.management.Management.muteMember
 import cc.gxstudio.gmanager.management.Management.openManage
+import cc.gxstudio.gmanager.management.Management.recallRecentMsg
+import cc.gxstudio.gmanager.management.Management.recallmsg
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import net.mamoe.mirai.console.command.*
@@ -21,8 +24,6 @@ import net.mamoe.mirai.message.data.AtAll
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain
-import net.mamoe.mirai.message.data.MessageSource.Key.recall
-import net.mamoe.mirai.message.data.QuoteReply
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 
 
@@ -46,6 +47,7 @@ object Commands {
                 changeMemberNickCommand(),MuteAllCommand()
                 //SendAnnouncementCommand()
                 //SendGroupMessageCommand()
+                                              ,RecallMessageRecentCommand()
                                               )
             mlist.addAll(COMMAND_LIST_GLOBAL)
             return mlist
@@ -169,41 +171,35 @@ object Commands {
     class RecallMessageCommand : RawCommand(
         PluginMain, "recall",
         description = "基础指令-撤回指定消息",
-        // usage ="[回复的消息] /recall"
+         usage ="[回复的消息] /recall"
                                            ) {
         
         override suspend fun CommandContext.onCommand(args: MessageChain) {//TODO:完成撤回消息参数
             val group = this.sender.getGroupOrNull()
             if (this.sender.dontHasNormalCommandPermission(this@RecallMessageCommand, group)) return
-            for (msg in originalMessage) if (msg is QuoteReply) {
-                msg.source.recall()
-                sender.sendGroupOrOtherMessage("已撤回消息")
-                //todo:完成撤回消息通知管理
-                return
-            }
+            recallmsg()
         }
     }
     
-    class recallMessageRecentCommand : SimpleCommand(
+    class RecallMessageRecentCommand : SimpleCommand(
         PluginMain, "recallrecent",
         description = "基础指令-撤回最近的N条消息"
                                                     ) {
         @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO:完成撤回最近消息参数
-            if (dontHasNormalCommandPermission(this@recallMessageRecentCommand, group)) return
-            //TODO:完成撤回最近消息
+        suspend fun CommandSender.onCommand(num:Int,group: Group? = this.getGroupOrNull()) {//TODO:完成撤回最近消息参数
+            if (dontHasNormalCommandPermission(this@RecallMessageRecentCommand, group)) return
+            recallRecentMsg(num)
         }
-        
     }
     
     //改名指令
-    class changeAllNickCommand : SimpleCommand(
+    class ChangeAllNickCommand : SimpleCommand(
         PluginMain, "changeallnick",
         description = "基础指令-一键改名"
                                               ) {
         @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
-            if (dontHasNormalCommandPermission(this@changeAllNickCommand, group)) return
+            if (dontHasNormalCommandPermission(this@ChangeAllNickCommand, group)) return
             //TODO:完成修改群名片
         }
     }
@@ -542,11 +538,23 @@ suspend fun CommandSender.checkGroupExist(group: Group? = getGroupOrNull()): Boo
         false
     }
 }
+suspend fun CommandContext.checkGroupExist(group:Group? = sender.subject as Group): Boolean {
+    return if (groupExist(group)) true else {
+        sender.subject!!.sendMessage("群号提供错误。")
+        false
+    }
+}
 
 
 fun groupExist(group: Group?): Boolean =
     if (group != null) {
-        joinedGroup(group)
+        if(joinedGroup(group)){
+            Log.i("群组已加入且不为空")
+            true
+        }else {
+            Log.i("群组未加入且不为空")
+            false
+        }
     } else false
 
 

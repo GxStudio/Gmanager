@@ -1,8 +1,10 @@
 package cc.gxstudio.gmanager
 
 import cc.gxstudio.gmanager.command.Commands
+import cc.gxstudio.gmanager.config.GlobalConfig
 import cc.gxstudio.gmanager.config.KtorConfig
 import cc.gxstudio.gmanager.config.MysqlConfig
+import cc.gxstudio.gmanager.data.getGData
 import cc.gxstudio.gmanager.globalvar.enable
 import cc.gxstudio.gmanager.globalvar.namespace
 import cc.gxstudio.gmanager.http.api.startServer
@@ -52,6 +54,7 @@ object PluginMain : KotlinPlugin(
         //_______________________________________
         KtorConfig.reload()
         MysqlConfig.reload()
+        GlobalConfig.reload()
         //___________________________________________
         Commands.regCommand()
         //CommandManager.unregisterCommand(GroupCommand())
@@ -70,8 +73,9 @@ object PluginMain : KotlinPlugin(
         enable = true
         //______________________________________
         val eventChannel = GlobalEventChannel.parentScope(this)
-        eventChannel.subscribeAlways<GroupMessageEvent> {//群消息事件
-        
+        eventChannel.subscribeAlways<GroupMessageEvent> {
+            Log.i(message.contentToString(),"GroupMessageEvent")//群消息事件
+        group.getGData().addMessage(this)
         }
         eventChannel.subscribeAlways<FriendMessageEvent> { //好友信息事件
         }
@@ -90,7 +94,7 @@ object PluginMain : KotlinPlugin(
             Log.i("收到机器人登录，初始化中", "BotOnlineEvent")
             InitializeGroup.list(bot.groups)
         }
-        
+        loadTest()
     }
     
     

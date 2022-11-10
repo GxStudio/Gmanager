@@ -13,7 +13,14 @@ import net.mamoe.mirai.contact.Group
 suspend fun CommandSender.dontHasNormalCommandPermission(command: Command, group: Group?): Boolean =
     !hasNormalCommandPermission(command, group)
 
-fun CommandSender.groupExist():Boolean = groupExist(this.getGroupOrNull())
+fun CommandSender.groupExist(): Boolean = if (groupExist(this.getGroupOrNull())) {
+    Log.v("群组存在且已被开启。")
+    true
+} else {
+    Log.i("群组不存在或未被开启。")
+    false
+}
+
 
 /** 用于检查基础指令(指向群的指令)使用者是否拥有权限
  *
@@ -25,6 +32,7 @@ suspend fun CommandSender.hasNormalCommandPermission(command: Command, group: Gr
             Log.v("控制台调用，返回正常", "hasNormalCommandPermission-isConsole")
             true
         }
+        
         group != null -> {//群不为空(群内用户调用)执行此分支
             
             Log.v("群内用户调用，进行判断", "hasNormalCommandPermission-getGroupOrNull")
@@ -38,6 +46,7 @@ suspend fun CommandSender.hasNormalCommandPermission(command: Command, group: Gr
             Log.i("用户拥有权限情况:$hasPermission", "hasNormalCommandPermission-getGroupOrNull")
             hasPermission
         }
+        
         else          -> {
             Log.v("用户（私聊/控制台）大概率未提供群ID", "hasNormalCommandPermission")
             sendMessage("私聊或控制台调用指令${CommandManager.commandPrefix}${command.primaryName}需要加入群号。")

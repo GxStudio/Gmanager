@@ -1,5 +1,6 @@
 package cc.gxstudio.gmanager.config
 
+import cc.gxstudio.gmanager.PluginMain.reload as reloadConfig
 import cc.gxstudio.gmanager.config.GroupConfig.GroupSettings.VoteSettings.*
 import cc.gxstudio.gmanager.config.GroupConfig.GroupHintMsg.SendInGroupMsg.*
 import cc.gxstudio.gmanager.config.GroupConfig.GroupHintMsg.SendInPrivateMsg.*
@@ -18,6 +19,7 @@ import cc.gxstudio.gmanager.config.GroupConfig.GroupSettings.*
 import cc.gxstudio.gmanager.config.GroupConfig.GroupHintMsg.*
 import cc.gxstudio.gmanager.extension.getAllJoinedGroups
 import cc.gxstudio.gmanager.management.Penalties
+import cc.gxstudio.gmanager.management.PenaltyType
 import kotlinx.serialization.Serializable
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.value
@@ -29,6 +31,11 @@ fun getGmanageConfig(group: Long): GroupConfig = groupConfigList[group]!!
 
 fun Group.getGConfig(): GroupConfig {
     return getGmanageConfig(this.id)
+}
+
+fun GroupConfig.load(): GroupConfig {
+    this.reloadConfig()
+    return this
 }
 
 
@@ -101,7 +108,7 @@ class GroupConfig(groupId: Long) : AutoSavePluginConfig("group/$groupId") {
                 noBlankText = false,
                 imagePerMsg = 5,
                 continuouslySendImageTimes = 5,
-                penaltie = Penalties.INGORE(),
+                penaltie = Penalties(PenaltyType.INGORE),
                 deleteMsg = false,
                 deleteFirstFloodMsg = false,
                 clearScreen = false,
@@ -112,7 +119,7 @@ class GroupConfig(groupId: Long) : AutoSavePluginConfig("group/$groupId") {
                 fileFormat = listOf("avi", "exe", "rar"), fileSizeLimit = 1024 * 1024 * 1024,
                 fileNameNotAllowed = listOf("国产"),
                 fileUploadLimit = 100,
-                penaltie = Penalties.INGORE(),
+                penaltie = Penalties(PenaltyType.INGORE),
                 deleteFile = false
                             ),
             AutoDeleteReview(
@@ -364,7 +371,7 @@ class GroupConfig(groupId: Long) : AutoSavePluginConfig("group/$groupId") {
             val imagePerMsg: Int,
             val continuouslySendImageTimes: Int,
             
-            val penaltie: Penalties.Penaltie,
+            val penaltie: Penalties,
             val deleteMsg: Boolean,
             val deleteFirstFloodMsg: Boolean,
             val clearScreen: Boolean,
@@ -391,7 +398,7 @@ class GroupConfig(groupId: Long) : AutoSavePluginConfig("group/$groupId") {
             val fileSizeLimit: Long,//文件大小限制，单位为字节
             val fileNameNotAllowed: List<String>,//不允许上传的文件名
             val fileUploadLimit: Int,//每个人每天上传文件的数量限制
-            val penaltie: Penalties.Penaltie,
+            val penaltie: Penalties,
             val deleteFile: Boolean,
                                    )
         
