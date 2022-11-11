@@ -408,7 +408,7 @@ class GroupConfig(groupId: Long) : AutoSavePluginConfig("group/$groupId") {
     }
     
     @Serializable
-    data class GroupMemberAutoNick(
+    data class GroupMemberAutoNick(//mirai未实现修改
         val nickFormartSettings: NickFormartSettings,
         val nickChangeSettings: NickChangeSettings
                                   ) {
@@ -417,7 +417,7 @@ class GroupConfig(groupId: Long) : AutoSavePluginConfig("group/$groupId") {
             val formartText: String,
             val useRemarkInfo: Boolean,
             val maxLength: Int,
-            val blankLocationReplace: String,
+            val blankLocationReplace: String,//mirai没实现
             val manName: String,
             val womanName: String,
             val sexLessReplace: String

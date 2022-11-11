@@ -3,10 +3,16 @@ package cc.gxstudio.gmanager.command
 import cc.gxstudio.gmanager.PluginMain
 import cc.gxstudio.gmanager.extension.dontHasNormalCommandPermission
 import cc.gxstudio.gmanager.extension.getAllJoinedGroups
+import cc.gxstudio.gmanager.extension.warn
 import cc.gxstudio.gmanager.http.PostUtil
 import cc.gxstudio.gmanager.logutil.Log
+import cc.gxstudio.gmanager.management.Management.changeCorrectNameCard
+import cc.gxstudio.gmanager.management.Management.changeNameCard
 import cc.gxstudio.gmanager.management.Management.cleanScreen
+import cc.gxstudio.gmanager.management.Management.clearGroupWarn
+import cc.gxstudio.gmanager.management.Management.clearWarn
 import cc.gxstudio.gmanager.management.Management.closeManage
+import cc.gxstudio.gmanager.management.Management.findRepeatMembers
 import cc.gxstudio.gmanager.management.Management.kickMember
 import cc.gxstudio.gmanager.management.Management.muteAll
 import cc.gxstudio.gmanager.management.Management.muteMember
@@ -44,10 +50,11 @@ object Commands {
                 AtAllCommand(),
                 
                 RecallMessageCommand(),
-                changeMemberNickCommand(),MuteAllCommand()
+                changeMemberNickCommand(), MuteAllCommand()
                 //SendAnnouncementCommand()
                 //SendGroupMessageCommand()
-                                              ,RecallMessageRecentCommand()
+                , RecallMessageRecentCommand(),
+                CheckRepeatMemberCommand()
                                               )
             mlist.addAll(COMMAND_LIST_GLOBAL)
             return mlist
@@ -171,7 +178,7 @@ object Commands {
     class RecallMessageCommand : RawCommand(
         PluginMain, "recall",
         description = "基础指令-撤回指定消息",
-         usage ="[回复的消息] /recall"
+        usage = "[回复的消息] /recall"
                                            ) {
         
         override suspend fun CommandContext.onCommand(args: MessageChain) {//TODO:完成撤回消息参数
@@ -186,7 +193,7 @@ object Commands {
         description = "基础指令-撤回最近的N条消息"
                                                     ) {
         @Handler
-        suspend fun CommandSender.onCommand(num:Int,group: Group? = this.getGroupOrNull()) {//TODO:完成撤回最近消息参数
+        suspend fun CommandSender.onCommand(num: Int, group: Group? = this.getGroupOrNull()) {//TODO:完成撤回最近消息参数
             if (dontHasNormalCommandPermission(this@RecallMessageRecentCommand, group)) return
             recallRecentMsg(num)
         }
@@ -221,22 +228,22 @@ object Commands {
                                                    ) {
         @Handler
         suspend fun CommandSender.onCommand(
-            nick: String,
             user: NormalMember,
+            nick: String,
+            
             group: Group? = this.getGroupOrNull()
                                            ) {//TODO：完成参数
             if (dontHasNormalCommandPermission(this@changeMemberNickCommand, group)) return
-            //todo:完成群成员名片修改
-            user.nameCard = nick
+            changeNameCard(user, nick)
         }
     }
     
     class changeCorrectNickCommand() :
         SimpleCommand(PluginMain, "changecorrectnick", description = "基础指令-格式化指定群员名片") {
         @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
+        suspend fun CommandSender.onCommand(user: NormalMember, group: Group? = this.getGroupOrNull()) {//TODO：完成参数
             if (dontHasNormalCommandPermission(this@changeCorrectNickCommand, group)) return
-            //TODO:完成修改指定群员正确群名片
+            changeCorrectNameCard(user)
         }
     }
     
@@ -248,7 +255,7 @@ object Commands {
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
             if (dontHasNormalCommandPermission(this@CheckSilenceMemberCommand, group)) return
             //TODO:完成检测潜水群员
-            
+            //mirai未实现，暂不支持
         }
     }
     
@@ -258,8 +265,7 @@ object Commands {
                                                   ) {
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {//TODO：完成参数
             if (dontHasNormalCommandPermission(this@CheckRepeatMemberCommand, group)) return
-            //TODO:完成检测重复群员
-            
+            findRepeatMembers()
         }
     }
     
@@ -303,9 +309,9 @@ object Commands {
         description = "基础指令-警告群成员"
                                      ) {
         @Handler
-        suspend fun CommandSender.onCommand(member :NormalMember,group: Group? = this.getGroupOrNull()) {
+        suspend fun CommandSender.onCommand(member: NormalMember, group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@WarnCommand, group)) return
-            
+            member.warn()
             //完成警告
             
         }
@@ -316,11 +322,10 @@ object Commands {
         description = "基础指令-清除群成员警告"
                                                 ) {
         @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
+        suspend fun CommandSender.onCommand(member :NormalMember,group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@ClearMemberWarnCommand, group)) return
+            clearWarn(member)
             
-            
-            //TODO:完成清除群成员警告
         }
     }
     
@@ -331,7 +336,7 @@ object Commands {
         @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
             if (dontHasNormalCommandPermission(this@ClearGroupWarnCommand, group)) return
-            //TODO:完成清除群所有成员警告
+            clearGroupWarn()
             
         }
     }
@@ -339,7 +344,7 @@ object Commands {
     //投票执行
     class VoteKickCommand : SimpleCommand(
         PluginMain, "votekick",
-        description = "基础指令-清除群所有成员警告"
+        description = "基础指令-投票踢人"
                                          ) {
         @Handler
         suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
@@ -455,22 +460,6 @@ object Commands {
         
     }
     
-    class DeleteGroupMessageCommand() :
-        SimpleCommand(PluginMain, "deletegroupmessage", description = "基础指令-撤回（回复的）指定消息") {
-        @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
-            if (dontHasNormalCommandPermission(this@DeleteGroupMessageCommand, group)) return
-        }
-    }
-    
-    class DeleteRecentMessageCommand() :
-        SimpleCommand(PluginMain, "deleterecentmessage", description = "基础指令-撤回最近消息") {
-        @Handler
-        suspend fun CommandSender.onCommand(group: Group? = this.getGroupOrNull()) {
-            if (dontHasNormalCommandPermission(this@DeleteRecentMessageCommand, group)) return
-            
-        }
-    }
     
     class PermissionCommands() // 完成LP的简单设置处理指令
     
@@ -538,7 +527,8 @@ suspend fun CommandSender.checkGroupExist(group: Group? = getGroupOrNull()): Boo
         false
     }
 }
-suspend fun CommandContext.checkGroupExist(group:Group? = sender.subject as Group): Boolean {
+
+suspend fun CommandContext.checkGroupExist(group: Group? = sender.subject as Group): Boolean {
     return if (groupExist(group)) true else {
         sender.subject!!.sendMessage("群号提供错误。")
         false
@@ -548,10 +538,10 @@ suspend fun CommandContext.checkGroupExist(group:Group? = sender.subject as Grou
 
 fun groupExist(group: Group?): Boolean =
     if (group != null) {
-        if(joinedGroup(group)){
+        if (joinedGroup(group)) {
             Log.i("群组已加入且不为空")
             true
-        }else {
+        } else {
             Log.i("群组未加入且不为空")
             false
         }

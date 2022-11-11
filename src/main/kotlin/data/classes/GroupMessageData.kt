@@ -28,12 +28,11 @@ data class GroupMessageData(
         if (group != null) {
             val msgSource =
                 bot.buildMessageSource(MessageSourceKind.GROUP) {
-                    time(time)
-                    internalId(*internalIds)
-                    id(*ids)
-                    sender(sendFromUin)
-                    target(targetUin)
-                    
+                    time(this@GroupMessageData.time)
+                    internalId(*this@GroupMessageData.internalIds)
+                    id(*this@GroupMessageData.ids)
+                    sender(this@GroupMessageData.sendFromUin)
+                    target(this@GroupMessageData.targetUin)
                 }
             Log.v("群组存在，开始撤回。", "GroupMessage-recall")
             if (recalled) {
